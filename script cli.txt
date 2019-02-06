@@ -1,0 +1,14 @@
+CLI command to create a Resource group
+~$ az group create --name TestRg3 --location eastus
+
+CLI command to create a VM in the above RGP
+~$ az vm create \
+> --resource-group TestRg3 \
+> --name VM005 \
+> --image UbuntuLTS \
+> --admin-username azureuser \
+> --generate-ssh-keys
+
+CLI command to create a storage account
+~$ az storage account create -n storagevinayakac5 -g TestRg3 -l westus --sku Standard_LRS
+

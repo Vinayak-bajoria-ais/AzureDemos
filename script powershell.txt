@@ -1,0 +1,20 @@
+#to connect the Power shell account
+Connect-AzureRmAccount
+
+
+New-AzureRmResourceGroup -Name Test_Rg2 -Location "South Central US"
+
+
+#to create the VM in the PowerShell
+PS C:\Windows\system32> New-AzureRmVm `
+>>     -ResourceGroupName "Test-Rg2" `
+>>     -Name "VM004" `
+>>     -Location "East US" `
+>>     -VirtualNetworkName "VM004Net" `
+>>     -SubnetName "VM004Subnet" `
+>>     -SecurityGroupName "VM004NSG" `
+>>     -PublicIpAddressName "VM0004PIpA" `
+>>     -OpenPorts 80,3389
+
+# to create a storage account
+PS C:\Windows\system32> New-AzureRmStorageAccount -ResourceGroupName Test-Rg2 -AccountName testvinayaksa2 -Location eastus -SkuName Standard_GRS
