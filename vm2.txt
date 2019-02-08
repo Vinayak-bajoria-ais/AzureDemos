@@ -1,0 +1,355 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "virtualMachines_vm2_name": {
+            "defaultValue": "vm2",
+            "type": "String"
+        },
+        "virtualNetworks_vnet_name": {
+            "defaultValue": "vnet",
+            "type": "String"
+        },
+        "networkInterfaces_nic2vm2_name": {
+            "defaultValue": "nic2vm2",
+            "type": "String"
+        },
+        "publicIPAddresses_myPublicIP_name": {
+            "defaultValue": "myPublicIP",
+            "type": "String"
+        },
+        "subnets_default_name": {
+            "defaultValue": "default",
+            "type": "String"
+        },
+        "subnets_subnet1_name": {
+            "defaultValue": "subnet1",
+            "type": "String"
+        },
+        "subnets_subnet2_name": {
+            "defaultValue": "subnet2",
+            "type": "String"
+        },
+        "subnets_subnet3_name": {
+            "defaultValue": "subnet3",
+            "type": "String"
+        },
+        "storageAccounts_34rfqxntoowf4saddiskvm_name": {
+            "defaultValue": "34rfqxntoowf4saddiskvm",
+            "type": "String"
+        },
+        "virtualMachines_vm2_id": {
+            "defaultValue": "/subscriptions/ecef2fd1-ded5-4e85-801a-a4d0fa63dfad/resourceGroups/test1/providers/Microsoft.Compute/disks/vm2_OsDisk_1_e93c80b2535d4b8dafe1f83e2c19ad57",
+            "type": "String"
+        },
+        "virtualMachines_vm2_id_1": {
+            "defaultValue": "/subscriptions/ecef2fd1-ded5-4e85-801a-a4d0fa63dfad/resourceGroups/test1/providers/Microsoft.Compute/disks/vm2_disk2_c346ff427c0747d5992447813c80fe20",
+            "type": "String"
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "comments": "Generalized from resource: '/subscriptions/ecef2fd1-ded5-4e85-801a-a4d0fa63dfad/resourceGroups/test1/providers/Microsoft.Compute/virtualMachines/vm2'.",
+            "type": "Microsoft.Compute/virtualMachines",
+            "name": "[parameters('virtualMachines_vm2_name')]",
+            "apiVersion": "2018-06-01",
+            "location": "centralus",
+            "scale": null,
+            "properties": {
+                "hardwareProfile": {
+                    "vmSize": "Standard_DS1_v2"
+                },
+                "storageProfile": {
+                    "imageReference": {
+                        "publisher": "MicrosoftWindowsServer",
+                        "offer": "WindowsServer",
+                        "sku": "2016-Datacenter",
+                        "version": "latest"
+                    },
+                    "osDisk": {
+                        "osType": "Windows",
+                        "name": "[concat(parameters('virtualMachines_vm2_name'),'_OsDisk_1_e93c80b2535d4b8dafe1f83e2c19ad57')]",
+                        "createOption": "FromImage",
+                        "caching": "ReadWrite",
+                        "managedDisk": {
+                            "storageAccountType": "Premium_LRS",
+                            "id": "[parameters('virtualMachines_vm2_id')]"
+                        },
+                        "diskSizeGB": 127
+                    },
+                    "dataDisks": [
+                        {
+                            "lun": 0,
+                            "name": "[concat(parameters('virtualMachines_vm2_name'),'_disk2_c346ff427c0747d5992447813c80fe20')]",
+                            "createOption": "Empty",
+                            "caching": "None",
+                            "managedDisk": {
+                                "storageAccountType": "Premium_LRS",
+                                "id": "[parameters('virtualMachines_vm2_id_1')]"
+                            },
+                            "diskSizeGB": 256
+                        }
+                    ]
+                },
+                "osProfile": {
+                    "computerName": "[parameters('virtualMachines_vm2_name')]",
+                    "adminUsername": "sysadmin",
+                    "windowsConfiguration": {
+                        "provisionVMAgent": true,
+                        "enableAutomaticUpdates": true
+                    },
+                    "secrets": []
+                },
+                "networkProfile": {
+                    "networkInterfaces": [
+                        {
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces', parameters('networkInterfaces_nic2vm2_name'))]"
+                        }
+                    ]
+                },
+                "diagnosticsProfile": {
+                    "bootDiagnostics": {
+                        "enabled": true,
+                        "storageUri": "[concat('https', '://', parameters('storageAccounts_34rfqxntoowf4saddiskvm_name'), '.blob.core.windows.net', '/')]"
+                    }
+                }
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/networkInterfaces', parameters('networkInterfaces_nic2vm2_name'))]",
+                "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_34rfqxntoowf4saddiskvm_name'))]"
+            ]
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/ecef2fd1-ded5-4e85-801a-a4d0fa63dfad/resourceGroups/test1/providers/Microsoft.Network/networkInterfaces/nic2vm2'.",
+            "type": "Microsoft.Network/networkInterfaces",
+            "name": "[parameters('networkInterfaces_nic2vm2_name')]",
+            "apiVersion": "2018-10-01",
+            "location": "centralus",
+            "scale": null,
+            "properties": {
+                "provisioningState": "Succeeded",
+                "resourceGuid": "d11dc8e2-b58f-42f3-99f2-83da129fe022",
+                "ipConfigurations": [
+                    {
+                        "name": "ipconfig1",
+                        "etag": "W/\"39ca93db-8575-4fe5-b3b3-02213c46ba9c\"",
+                        "properties": {
+                            "provisioningState": "Succeeded",
+                            "privateIPAddress": "10.0.0.20",
+                            "privateIPAllocationMethod": "Dynamic",
+                            "publicIPAddress": {
+                                "id": "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIPAddresses_myPublicIP_name'))]"
+                            },
+                            "subnet": {
+                                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworks_vnet_name'), parameters('subnets_subnet2_name'))]"
+                            },
+                            "primary": true,
+                            "privateIPAddressVersion": "IPv4"
+                        }
+                    }
+                ],
+                "dnsSettings": {
+                    "dnsServers": [],
+                    "appliedDnsServers": [],
+                    "internalDomainNameSuffix": "k4ciz3awrraurcxomkl5n3znlb.gx.internal.cloudapp.net"
+                },
+                "macAddress": "00-0D-3A-3F-B6-E4",
+                "enableAcceleratedNetworking": false,
+                "enableIPForwarding": false,
+                "primary": true,
+                "tapConfigurations": []
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIPAddresses_myPublicIP_name'))]",
+                "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworks_vnet_name'), parameters('subnets_subnet2_name'))]"
+            ]
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/ecef2fd1-ded5-4e85-801a-a4d0fa63dfad/resourceGroups/test1/providers/Microsoft.Network/publicIPAddresses/myPublicIP'.",
+            "type": "Microsoft.Network/publicIPAddresses",
+            "sku": {
+                "name": "Basic",
+                "tier": "Regional"
+            },
+            "name": "[parameters('publicIPAddresses_myPublicIP_name')]",
+            "apiVersion": "2018-10-01",
+            "location": "centralus",
+            "scale": null,
+            "properties": {
+                "provisioningState": "Succeeded",
+                "resourceGuid": "181ada30-203f-4469-8f9c-8a9fac96b710",
+                "ipAddress": "13.89.219.39",
+                "publicIPAddressVersion": "IPv4",
+                "publicIPAllocationMethod": "Dynamic",
+                "idleTimeoutInMinutes": 4,
+                "dnsSettings": {
+                    "domainNameLabel": "configure3",
+                    "fqdn": "configure3.centralus.cloudapp.azure.com"
+                },
+                "ipTags": []
+            },
+            "dependsOn": []
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/ecef2fd1-ded5-4e85-801a-a4d0fa63dfad/resourceGroups/test1/providers/Microsoft.Network/virtualNetworks/vnet'.",
+            "type": "Microsoft.Network/virtualNetworks",
+            "name": "[parameters('virtualNetworks_vnet_name')]",
+            "apiVersion": "2018-10-01",
+            "location": "centralus",
+            "scale": null,
+            "properties": {
+                "provisioningState": "Succeeded",
+                "resourceGuid": "f48c8457-8c16-4841-8aee-6297f6f72d59",
+                "addressSpace": {
+                    "addressPrefixes": [
+                        "10.0.0.0/25"
+                    ]
+                },
+                "subnets": [
+                    {
+                        "name": "default",
+                        "etag": "W/\"d5cd4931-a965-4613-a31f-4491baefee88\"",
+                        "properties": {
+                            "provisioningState": "Succeeded",
+                            "addressPrefix": "10.0.0.48/28",
+                            "delegations": []
+                        }
+                    },
+                    {
+                        "name": "subnet1",
+                        "etag": "W/\"d5cd4931-a965-4613-a31f-4491baefee88\"",
+                        "properties": {
+                            "provisioningState": "Succeeded",
+                            "addressPrefix": "10.0.0.0/28",
+                            "serviceEndpoints": [],
+                            "delegations": []
+                        }
+                    },
+                    {
+                        "name": "subnet2",
+                        "etag": "W/\"d5cd4931-a965-4613-a31f-4491baefee88\"",
+                        "properties": {
+                            "provisioningState": "Succeeded",
+                            "addressPrefix": "10.0.0.16/28",
+                            "serviceEndpoints": [],
+                            "delegations": []
+                        }
+                    },
+                    {
+                        "name": "subnet3",
+                        "etag": "W/\"d5cd4931-a965-4613-a31f-4491baefee88\"",
+                        "properties": {
+                            "provisioningState": "Succeeded",
+                            "addressPrefix": "10.0.0.32/28",
+                            "serviceEndpoints": [],
+                            "delegations": []
+                        }
+                    }
+                ],
+                "virtualNetworkPeerings": [],
+                "enableDdosProtection": false,
+                "enableVmProtection": false
+            },
+            "dependsOn": []
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/ecef2fd1-ded5-4e85-801a-a4d0fa63dfad/resourceGroups/test1/providers/Microsoft.Storage/storageAccounts/34rfqxntoowf4saddiskvm'.",
+            "type": "Microsoft.Storage/storageAccounts",
+            "sku": {
+                "name": "Standard_LRS",
+                "tier": "Standard"
+            },
+            "kind": "Storage",
+            "name": "[parameters('storageAccounts_34rfqxntoowf4saddiskvm_name')]",
+            "apiVersion": "2018-07-01",
+            "location": "centralus",
+            "tags": {},
+            "scale": null,
+            "properties": {
+                "networkAcls": {
+                    "bypass": "AzureServices",
+                    "virtualNetworkRules": [],
+                    "ipRules": [],
+                    "defaultAction": "Allow"
+                },
+                "supportsHttpsTrafficOnly": false,
+                "encryption": {
+                    "services": {
+                        "file": {
+                            "enabled": true
+                        },
+                        "blob": {
+                            "enabled": true
+                        }
+                    },
+                    "keySource": "Microsoft.Storage"
+                }
+            },
+            "dependsOn": []
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/ecef2fd1-ded5-4e85-801a-a4d0fa63dfad/resourceGroups/test1/providers/Microsoft.Network/virtualNetworks/vnet/subnets/default'.",
+            "type": "Microsoft.Network/virtualNetworks/subnets",
+            "name": "[concat(parameters('virtualNetworks_vnet_name'), '/', parameters('subnets_default_name'))]",
+            "apiVersion": "2018-10-01",
+            "scale": null,
+            "properties": {
+                "provisioningState": "Succeeded",
+                "addressPrefix": "10.0.0.48/28",
+                "delegations": []
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworks_vnet_name'))]"
+            ]
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/ecef2fd1-ded5-4e85-801a-a4d0fa63dfad/resourceGroups/test1/providers/Microsoft.Network/virtualNetworks/vnet/subnets/subnet1'.",
+            "type": "Microsoft.Network/virtualNetworks/subnets",
+            "name": "[concat(parameters('virtualNetworks_vnet_name'), '/', parameters('subnets_subnet1_name'))]",
+            "apiVersion": "2018-10-01",
+            "scale": null,
+            "properties": {
+                "provisioningState": "Succeeded",
+                "addressPrefix": "10.0.0.0/28",
+                "serviceEndpoints": [],
+                "delegations": []
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworks_vnet_name'))]"
+            ]
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/ecef2fd1-ded5-4e85-801a-a4d0fa63dfad/resourceGroups/test1/providers/Microsoft.Network/virtualNetworks/vnet/subnets/subnet2'.",
+            "type": "Microsoft.Network/virtualNetworks/subnets",
+            "name": "[concat(parameters('virtualNetworks_vnet_name'), '/', parameters('subnets_subnet2_name'))]",
+            "apiVersion": "2018-10-01",
+            "scale": null,
+            "properties": {
+                "provisioningState": "Succeeded",
+                "addressPrefix": "10.0.0.16/28",
+                "serviceEndpoints": [],
+                "delegations": []
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworks_vnet_name'))]"
+            ]
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/ecef2fd1-ded5-4e85-801a-a4d0fa63dfad/resourceGroups/test1/providers/Microsoft.Network/virtualNetworks/vnet/subnets/subnet3'.",
+            "type": "Microsoft.Network/virtualNetworks/subnets",
+            "name": "[concat(parameters('virtualNetworks_vnet_name'), '/', parameters('subnets_subnet3_name'))]",
+            "apiVersion": "2018-10-01",
+            "scale": null,
+            "properties": {
+                "provisioningState": "Succeeded",
+                "addressPrefix": "10.0.0.32/28",
+                "serviceEndpoints": [],
+                "delegations": []
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworks_vnet_name'))]"
+            ]
+        }
+    ]
+}
