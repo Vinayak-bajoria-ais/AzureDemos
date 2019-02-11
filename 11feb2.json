@@ -23,11 +23,11 @@
 		},
 		
 		"UbuntuvmName": {
-		"type": "String"
+		"type": "String",
 		"metadata": {
 		     "description": "this the ubuntu vm name."
             }
-        }
+        },
 			 
         "dnsLabelPrefix": {
             "type": "String",
