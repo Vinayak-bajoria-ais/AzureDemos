@@ -1,0 +1,309 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "adminUsername": {
+            "type": "String",
+            "metadata": {
+                "description": "Username for the Virtual Machine."
+            }
+        },
+        "adminPassword": {
+            "type": "SecureString",
+            "metadata": {
+                "description": "Password for the Virtual Machine."
+            }
+        },
+        "dnsLabelPrefix": {
+            "type": "String",
+            "metadata": {
+                "description": "Unique DNS Name for the Public IP used to access the Virtual Machine."
+            }
+        },
+        "windowsOSVersion": {
+            "defaultValue": "2012-R2-Datacenter",
+            "allowedValues": [
+                "2008-R2-SP1",
+                "2012-Datacenter",
+                "2012-R2-Datacenter"
+            ],
+            "type": "String",
+            "metadata": {
+                "description": "The Windows version for the VM. This picks a fully patched image of this given Windows version. Allowed values: 2008-R2-SP1, 2012-Datacenter, 2012-R2-Datacenter."
+            }
+        },
+        "ubuntuOSVersion": {
+            "defaultValue": "16.04.0-LTS",
+            "allowedValues": [
+                "12.04.5-LTS",
+                "14.04.5-LTS",
+                "15.10",
+                "16.04.0-LTS"
+            ],
+            "type": "String",
+            "metadata": {
+                "description": "The Ubuntu version for the VM. This will pick a fully patched image of this given Ubuntu version."
+            }
+        }
+    },
+    "variables": {
+        "storageAccountNamewindows": "staccrg1102",
+        "sizeOfDiskInGBwindows": "100",
+        "dataDisk1VhdNamewindows": "datadisk1",
+        "locationwindows": "[resourceGroup().location]",
+        "imagePublisherwindows": "MicrosoftWindowsServer",
+        "imageOfferwindows": "WindowsServer",
+        "OSDiskNamewindows": "osdiskforwindowssimple",
+        "nicNamewindows": "nicwindows",
+        "addressPrefixwindows": "10.0.0.0/25",
+        "subnetNamewindows": "subnet1",
+        "subnetPrefixwindows": "10.0.0.0/28",
+        "storageAccountTypewindows": "Standard_LRS",
+        "publicIPAddressNamewindows": "PublicIPwindows",
+        "publicIPAddressTypewindows": "Dynamic",
+        "vmStorageAccountContainerNamewindows": "vhdswindows",
+        "vmNamewindows": "windowsvM",
+        "vmSizewindows": "Standard_B1s",
+        "virtualNetworkNamewindows": "vnet1102",
+        "vnetIDwindows": "[resourceId('Microsoft.Network/virtualNetworks',variables('virtualNetworkNamewindows'))]",
+        "subnetRefwindows": "[concat(variables('vnetIDwindows'),'/subnets/',variables('subnetNamewindows'))]",
+        "apiVersionwindows": "2015-06-15",
+        "storageAccountNameubuntu": "stuaccrg1102",
+        "sizeOfDiskInGBubuntu": "100",
+        "dataDisk1VhdNameubuntu": "datadisk2",
+        "locationubuntu": "[resourceGroup().location]",
+        "imagePublisherubuntu": "Canonical",
+        "imageOfferubuntu": "UbuntuServer",
+        "OSDiskNameubuntu": "osdiskforubuntuserver",
+        "nicNameubuntu": "nicubuntu",
+        "addressPrefixubuntu": "10.0.0.0/25",
+        "subnetNameubuntu": "subnet2",
+        "subnetPrefixubuntu": "10.0.0.16/28",
+        "storageAccountTypeubuntu": "Standard_LRS",
+        "publicIPAddressNameubuntu": "PublicIPubuntu",
+        "publicIPAddressTypeubuntu": "Dynamic",
+        "vmStorageAccountContainerNameubuntu": "vhdsubuntu",
+        "vmNameubuntu": "ubuntuvm",
+        "vmSizeubuntu": "Standard_B1s",
+        "virtualNetworkNameubuntu": "vnet1102",
+        "vnetIDubuntu": "[resourceId('Microsoft.Network/virtualNetworks',variables('virtualNetworkNameubuntu'))]",
+        "subnetRefubuntu": "[concat(variables('vnetIDubuntu'),'/subnets/',variables('subnetNameubuntu'))]",
+        "apiVersionubuntu": "2015-06-15"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Storage/storageAccounts",
+            "name": "[variables('storageAccountNamewindows')]",
+            "apiVersion": "[variables('apiVersionwindows')]",
+            "location": "[variables('locationwindows')]",
+            "properties": {
+                "accountType": "[variables('storageAccountTypewindows')]"
+            }
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts",
+            "name": "[variables('storageAccountNameubuntu')]",
+            "apiVersion": "[variables('apiVersionubuntu')]",
+            "location": "[variables('locationubuntu')]",
+            "properties": {
+                "accountType": "[variables('storageAccountTypeubuntu')]"
+            }
+        },
+        {
+            "type": "Microsoft.Network/publicIPAddresses",
+            "name": "[variables('publicIPAddressNamewindows')]",
+            "apiVersion": "[variables('apiVersionwindows')]",
+            "location": "[variables('locationwindows')]",
+            "properties": {
+                "publicIPAllocationMethod": "[variables('publicIPAddressTypewindows')]",
+                "dnsSettings": {
+                    "domainNameLabel": "configurevm11102"
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Network/publicIPAddresses",
+            "name": "[variables('publicIPAddressNameubuntu')]",
+            "apiVersion": "[variables('apiVersionubuntu')]",
+            "location": "[variables('locationubuntu')]",
+            "properties": {
+                "publicIPAllocationMethod": "[variables('publicIPAddressTypeubuntu')]",
+                "dnsSettings": {
+                    "domainNameLabel": "configurevm21102"
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Network/networkInterfaces",
+            "name": "[variables('nicNamewindows')]",
+            "apiVersion": "[variables('apiVersionwindows')]",
+            "location": "[variables('locationwindows')]",
+            "properties": {
+                "ipConfigurations": [
+                    {
+                        "name": "ipconfig1",
+                        "properties": {
+                            "privateIPAllocationMethod": "Dynamic",
+                            "publicIPAddress": {
+                                "id": "[resourceId('Microsoft.Network/publicIPAddresses',variables('publicIPAddressNamewindows'))]"
+                            },
+                            "subnet": {
+                                "id": "[variables('subnetRefwindows')]"
+                            }
+                        }
+                    }
+                ]
+            },
+            "dependsOn": [
+                "[concat('Microsoft.Network/publicIPAddresses/', variables('publicIPAddressNamewindows'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Network/networkInterfaces",
+            "name": "[variables('nicNameubuntu')]",
+            "apiVersion": "[variables('apiVersionubuntu')]",
+            "location": "[variables('locationubuntu')]",
+            "properties": {
+                "ipConfigurations": [
+                    {
+                        "name": "ipconfig1",
+                        "properties": {
+                            "privateIPAllocationMethod": "Dynamic",
+                            "publicIPAddress": {
+                                "id": "[resourceId('Microsoft.Network/publicIPAddresses',variables('publicIPAddressNameubuntu'))]"
+                            },
+                            "subnet": {
+                                "id": "[variables('subnetRefubuntu')]"
+                            }
+                        }
+                    }
+                ]
+            },
+            "dependsOn": [
+                "[concat('Microsoft.Network/publicIPAddresses/', variables('publicIPAddressNameubuntu'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Compute/virtualMachines",
+            "name": "[variables('vmNamewindows')]",
+            "apiVersion": "[variables('apiVersionwindows')]",
+            "location": "[variables('locationwindows')]",
+            "properties": {
+                "hardwareProfile": {
+                    "vmSize": "[variables('vmSizewindows')]"
+                },
+                "osProfile": {
+                    "computerName": "[variables('vmNamewindows')]",
+                    "adminUsername": "[parameters('adminUsername')]",
+                    "adminPassword": "[parameters('adminPassword')]"
+                },
+                "storageProfile": {
+                    "imageReference": {
+                        "publisher": "[variables('imagePublisherwindows')]",
+                        "offer": "[variables('imageOfferwindows')]",
+                        "sku": "[parameters('windowsOSVersion')]",
+                        "version": "latest"
+                    },
+                    "osDisk": {
+                        "name": "osdisk",
+                        "vhd": {
+                            "uri": "[concat('http://',variables('storageAccountNamewindows'),'.blob.core.windows.net/',variables('vmStorageAccountContainerNamewindows'),'/',variables('OSDiskNamewindows'),'.vhd')]"
+                        },
+                        "caching": "ReadWrite",
+                        "createOption": "FromImage"
+                    },
+                    "dataDisks": [
+                        {
+                            "diskSizeGB": 1024,
+                            "lun": 0,
+                            "createOption": "Empty"
+                        },
+                        {
+                            "diskSizeGB": 1024,
+                            "lun": 1,
+                            "createOption": "Empty"
+                        }
+                    ]
+                },
+                "networkProfile": {
+                    "networkInterfaces": [
+                        {
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces',variables('nicNamewindows'))]"
+                        }
+                    ]
+                },
+                "diagnosticsProfile": {
+                    "bootDiagnostics": {
+                        "enabled": "true",
+                        "storageUri": "[concat('http://',variables('storageAccountNamewindows'),'.blob.core.windows.net')]"
+                    }
+                }
+            },
+            "dependsOn": [
+                "[concat('Microsoft.Storage/storageAccounts/', variables('storageAccountNamewindows'))]",
+                "[concat('Microsoft.Network/networkInterfaces/', variables('nicNamewindows'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Compute/virtualMachines",
+            "name": "[variables('vmNameubuntu')]",
+            "apiVersion": "[variables('apiVersionubuntu')]",
+            "location": "[variables('locationubuntu')]",
+            "properties": {
+                "hardwareProfile": {
+                    "vmSize": "[variables('vmSizeubuntu')]"
+                },
+                "osProfile": {
+                    "computerName": "[variables('vmNameubuntu')]",
+                    "adminUsername": "[parameters('adminUsername')]",
+                    "adminPassword": "[parameters('adminPassword')]"
+                },
+                "storageProfile": {
+                    "imageReference": {
+                        "publisher": "[variables('imagePublisherubuntu')]",
+                        "offer": "[variables('imageOfferubuntu')]",
+                        "sku": "[parameters('ubuntuOSVersion')]",
+                        "version": "latest"
+                    },
+                    "osDisk": {
+                        "name": "osdisk",
+                        "vhd": {
+                            "uri": "[concat('http://',variables('storageAccountNameubuntu'),'.blob.core.windows.net/',variables('vmStorageAccountContainerNameubuntu'),'/',variables('OSDiskNameubuntu'),'.vhd')]"
+                        },
+                        "caching": "ReadWrite",
+                        "createOption": "FromImage"
+                    },
+                    "dataDisks": [
+                        {
+                            "diskSizeGB": 1024,
+                            "lun": 0,
+                            "createOption": "Empty"
+                        },
+                        {
+                            "diskSizeGB": 1024,
+                            "lun": 1,
+                            "createOption": "Empty"
+                        }
+                    ]
+                },
+                "networkProfile": {
+                    "networkInterfaces": [
+                        {
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces',variables('nicNameubuntu'))]"
+                        }
+                    ]
+                },
+                "diagnosticsProfile": {
+                    "bootDiagnostics": {
+                        "enabled": "true",
+                        "storageUri": "[concat('http://',variables('storageAccountNameubuntu'),'.blob.core.windows.net')]"
+                    }
+                }
+            },
+            "dependsOn": [
+                "[concat('Microsoft.Storage/storageAccounts/', variables('storageAccountNameubuntu'))]",
+                "[concat('Microsoft.Network/networkInterfaces/', variables('nicNameubuntu'))]"
+            ]
+        }
+    ]
+}
