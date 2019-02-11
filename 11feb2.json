@@ -15,16 +15,16 @@
             }
         },
 		
-		"windowsvmName":{
+		"windowsvmName": {
 		"type": "String",
-		"metadata":{
+		"metadata": {
 		     "description": "this is the name of windows vm"
 			 }
 		},
 		
-		"UbuntuvmName":{
+		"UbuntuvmName": {
 		"type": "String"
-		"metadata":{
+		"metadata": {
 		     "description": "this the ubuntu vm name."
             }
         }
