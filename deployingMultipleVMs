@@ -44,8 +44,8 @@
 		},
    "vmWebName": {
 	"type": "string",
-	"defaultValue":  "vm-web",
-     "minLength": 1
+	"defaultValue":  "vm-web"
+
    },
    "vmWebAdminUserName": {
 	"type": "string",
