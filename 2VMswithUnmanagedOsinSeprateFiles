@@ -1,0 +1,183 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+	"parameters": {
+
+		"storageAccountName": {
+			"type": "string",
+			"defaultValue": "storageacc4i5rvhs2udlgw"
+		},
+
+		"resourceGroupName": {
+			"type": "string",
+			"defaultValue": "rg1702Demo1"
+		},
+
+
+
+		"vm1vnet1subnet1AdminUserName": {
+			"type": "string",
+			"defaultValue": "sysadminvm1subnet1",
+			"minLength": 1
+		},
+
+		"vm1vnet1subnet1AdminPassword": {
+			"type": "securestring",
+			"minLength": 1
+		},
+
+		"vmWindowsOSVersion": {
+			"type": "string",
+			"defaultValue": "2016-Datacenter",
+			"allowedValues": [
+				"2008-R2-SP1",
+				"2012-Datacenter",
+				"2016-Datacenter",
+				"Windows-Server-Technical-Preview"
+			]
+		},
+
+		"vmName": {
+			"type": "string",
+			"defaultValue": "virtual-machine-"
+		},
+
+
+		"virtualNetworkNameVnet1": {
+			"type": "string",
+			"defaultValue": "vnet1"
+		},
+
+		"virtualNetworkResourceGroup": {
+			"type": "string",
+			"defaultValue": "rg1702Demo1"
+		},
+
+		"availabilitySet0Name": {
+			"type": "string",
+			"defaultValue": "availabiltySet-0"
+		},
+
+		"networkInterfaceCardVnet1Subnet1Name": {
+			"type": "string",
+			"defaultValue": "NetworkInterfaceCard-Vnet1-Subnet1-"
+		}
+
+
+
+		
+
+
+
+
+
+
+	},
+	"variables": {
+
+		"vmImagePublisher": "MicrosoftWindowsServer",
+		"vmImageOffer": "WindowsServer",
+		"vmOSDiskName": "vmOsDisk",
+		"vmSize": "Standard_B1s",
+		"storageaccName": "storageacc4i5rvhs2udlgw",
+
+		"vnet1subnet1VnetID": "[resourceId(parameters('virtualNetworkResourceGroup'), 'Microsoft.Network/virtualNetworks', parameters('virtualNetworkNameVnet1'))]",
+		"vnet1subnet1SubnetRef": "[concat(variables('vnet1subnet1VnetID'), '/subnets/', 'Subnet-1')]",
+		"vmStorageAccountContainerName":  "vhds"
+
+
+
+
+
+
+
+
+
+
+	},
+
+	"resources": [
+   
+   {
+	"name": "[concat(parameters('vmName'), parameters('virtualNetworkNameVnet1'), 'Subnet-1', copyIndex())]",
+	"copy": {
+		"name": "Virtual-Machine-Vnet-1-Subnet-1",
+		"count": 2
+	},
+     "type": "Microsoft.Compute/virtualMachines",
+     "location": "centralus",
+     "apiVersion": "2015-06-15",
+	
+	 "dependsOn": [
+
+	],
+
+	
+	 "tags": {
+		"displayName": "[concat(parameters('vmName'), parameters('virtualNetworkNameVnet1'), 'Subnet-1', copyIndex())]"
+	 
+	 },
+
+     
+	 "properties": {
+		"hardwareProfile": {
+			"vmSize": "[variables('vmSize')]"
+		},
+
+
+		"availabilitySet": {
+			"id": "[resourceId('Microsof.Compute/availabilitySets', parameters('availabilitySet0Name'))]"
+		},
+
+		"osProfile": {
+			"computerName": "vm1vnet1Subnet1",
+			"adminUsername": "[parameters('vm1vnet1subnet1AdminUsername')]",
+			"adminPassword": "[parameters('vm1vnet1subnet1AdminPassword')]"
+		},
+
+       "storageProfile": {
+		"imageReference": {
+			"publisher": "[variables('vmImagePublisher')]",
+			"offer": "[variables('vmImageOffer')]",
+			"sku": "[parameters('vmWindowsOSVersion')]",
+			"version": "latest"
+		},
+
+		"osDisk": {
+			"name": "[concat('vmOsDisk', '-vnet-1', '-Subnet-1-', copyIndex())]",
+			"vhd": {
+				"uri": "[concat(reference(resourceId('Microsoft.Storage/storageAccounts', variables('storageaccName')), '2016-01-01').primaryEndpoints.blob, variables('vmStorageAccountContainerName'), '/', '-OsDisk-Vnet1-Subnet1-', copyIndex(), '.vhd')]"
+			},
+			"caching": "ReadWrite",
+			"createOption": "FromImage"
+		}
+
+		
+
+
+       },
+       "networkProfile": {
+         "networkInterfaces": [
+			{
+				"id": "[resourceId('Microsoft.Network/networkInterfaces',  concat(parameters('networkInterfaceCardVnet1Subnet1Name'), copyIndex()))]"
+			}
+         ]
+       }
+     }
+   }
+		
+
+
+
+
+
+
+
+
+
+	],
+   
+   
+  
+  "outputs": {}
+}
